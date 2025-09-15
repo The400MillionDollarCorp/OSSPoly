@@ -1,0 +1,9 @@
+{
+  "dependencies": ["."],
+  "graphs": {
+    "polyoracle": "./src/polyoracle/graph.py:graph"
+  },
+  "python_version": "3.11",
+  "env": "../.env"
+}
+ 

@@ -1,0 +1,20 @@
+
+# LangGraph API
+.langgraph_api
+
+# LangGraph
+.langgraph
+.langgraph.json
+.langgraph.lock
+
+# Python
+.venv
+.pytest_cache
+__pycache__
+.ruff_cache
+polytrader.egg-info
+.data
+.env
+.env.production
+.env.local
+.env.example
