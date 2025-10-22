@@ -2,7 +2,7 @@
 
 ## 🎯 What is OSSPoly?
 
-OSSPoly is an intelligent AI trading agent that analyzes and trades on Polymarket, a decentralized prediction market platform. The system consists of:
+OSSPoly is an intelligent Open Source AI trading agent that analyzes and trades on Polymarket, a decentralized prediction market platform. The system consists of:
 
 - **AI Agent "Poly"**: Performs deep market research, analysis, and makes trading decisions
 - **Web Interface**: Modern React app where you can monitor the agent's thought process and approve/reject trades
