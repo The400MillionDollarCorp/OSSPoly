@@ -1,4 +1,4 @@
-# PolyOracle Setup Guide
+# OSSPoly Setup Guide
 
 ## Issues Found and Fixed
 

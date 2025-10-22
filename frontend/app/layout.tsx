@@ -12,8 +12,8 @@ import { cookieToInitialState } from "wagmi";
 import { wagmiConfig } from "@/lib/wagmiConfig";
 
 export const metadata: Metadata = {
-  title: "Polymarket AI Dashboard",
-  description: "Monitor and control the Polymarket AI Agent",
+  title: "OSSPoly AI Dashboard",
+  description: "Monitor and control the OSSPoly AI Agent",
 };
 
 export default async function RootLayout({

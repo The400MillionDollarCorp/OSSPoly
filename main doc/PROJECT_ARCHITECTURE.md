@@ -1,8 +1,8 @@
-# PolyOracle Project Architecture
+# OSSPoly Project Architecture
 
 ## System Overview
 
-PolyOracle is a sophisticated AI-powered trading system for Polymarket prediction markets. The architecture follows a modern microservices approach with clear separation between the AI backend and user interface.
+OSSPoly is a sophisticated AI-powered trading system for Polymarket prediction markets. The architecture follows a modern microservices approach with clear separation between the AI backend and user interface.
 
 ```mermaid
 graph TB

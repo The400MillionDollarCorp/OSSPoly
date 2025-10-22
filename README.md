@@ -1,8 +1,8 @@
-# PolyOracle AI Project
+# OSSPoly AI Project
 
 ## Overview
 
-Welcome to the PolyOracle AI project! This repository consists of two main parts:
+Welcome to the OSSPoly AI project! This repository consists of two main parts:
 
 - **backend/**: A Python-based AI agent using LangChain, LangGraph, and related libraries to analyze and trade on Polymarket.
 - **frontend/**: A Next.js application with TailwindCSS, Shadcn UI, and TypeScript for the user-facing interface.

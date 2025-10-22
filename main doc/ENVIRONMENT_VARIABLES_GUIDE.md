@@ -1,7 +1,7 @@
 # Environment Variables Setup Guide
 
 ## Overview
-This guide provides detailed instructions for setting up all required environment variables for both the backend and frontend components of PolyOracle.
+This guide provides detailed instructions for setting up all required environment variables for both the backend and frontend components of OSSPoly.
 
 ## Backend Environment Variables (`backend/.env`)
 

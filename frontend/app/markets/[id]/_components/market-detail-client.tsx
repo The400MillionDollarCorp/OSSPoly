@@ -49,24 +49,48 @@ export default function MarketDetailClient({
         positions: [],
         availableFunds: 10.0
       });
+      
       const rawStreamData = [];
 
       // Keep track of successful reflections
       const successfulReflections = new Set<string>();
-
+      
       for await (const chunk of stream as any) {
         rawStreamData.push(chunk);
         console.log("Received chunk:", JSON.stringify(chunk, null, 2));
 
+        // DIAGNOSTIC: Log chunk structure details
+        console.log("🔍 CHUNK DIAGNOSTICS:");
+        console.log("  chunk.event:", chunk.event);
+        console.log("  chunk.data:", chunk.data);
+        console.log("  chunk.data?.event:", chunk.data?.event);
+        console.log("  chunk.data?.data:", chunk.data?.data);
+        console.log("  Type of chunk.data:", typeof chunk.data);
+        console.log("  Is chunk.data an object?", chunk.data && typeof chunk.data === 'object');
+
         // Skip metadata events
-        if (chunk.event === "metadata") continue;
+        if (chunk.event === "metadata") {
+          console.log("⏭️ Skipping metadata event");
+          continue;
+        }
+
+        // Unwrap nested message structure if present
+        let actualData = chunk.data;
+        if (chunk.event === "message" && chunk.data?.event === "updates") {
+          console.log("🔓 Unwrapping nested message structure");
+          actualData = chunk.data.data;
+        }
 
         // Handle both "updates" and "values" events from LangGraph
-        if ((chunk.event === "updates" || chunk.event === "values") && chunk.data) {
+        const effectiveEvent = chunk.data?.event || chunk.event;
+        console.log("📌 Effective event type:", effectiveEvent);
+        
+        if ((effectiveEvent === "updates" || effectiveEvent === "values") && actualData) {
           // Process each key in the data object as a separate event
-          console.log("Processing chunk.data:", chunk.data);
-          Object.entries(chunk.data).forEach(([eventName, eventData]) => {
-            console.log(`Processing event: ${eventName}`, eventData);
+          console.log("✅ Processing actualData:", actualData);
+          console.log("  Keys in actualData:", Object.keys(actualData));
+          Object.entries(actualData).forEach(([eventName, eventData]) => {
+            console.log(`🎯 Processing event: ${eventName}`, eventData);
             // Check if this is a successful reflection event
             if (
               eventName.startsWith("reflect_on_") &&

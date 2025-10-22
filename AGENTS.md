@@ -1,4 +1,4 @@
-# PolyOracle AI Project - Agent Guide
+# OSSPoly AI Project - Agent Guide
 
 ## Build/Test/Lint Commands
 - **Backend Tests:** `cd backend && python -m pytest tests/` (single test: `python -m pytest tests/test_file.py`)

@@ -1,4 +1,4 @@
-# PolyOracle Troubleshooting Guide
+# OSSPoly Troubleshooting Guide
 
 ## Common Issues and Solutions
 

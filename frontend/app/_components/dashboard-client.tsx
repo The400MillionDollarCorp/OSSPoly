@@ -100,10 +100,10 @@ export default function DashboardClient({
     <div className="container mx-auto px-4 py-8 max-w-7xl">
       <div className="text-center mb-12">
         <h1 className="text-4xl font-bold mb-3 bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
-          PolyOracle Agent
+          OSSPoly
         </h1>
         <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-          Pick any market, and let the Oracle do the rest for you.
+          Pick any market, and let the Agent do the rest for you.
         </p>
       </div>
 

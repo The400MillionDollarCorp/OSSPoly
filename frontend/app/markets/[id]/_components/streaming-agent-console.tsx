@@ -240,7 +240,7 @@ export default function StreamingAgentConsole({
       <div className="rounded-lg bg-white dark:bg-gray-800 shadow-lg p-6">
         <div className="flex items-center justify-between">
           <h2 className="text-2xl font-semibold text-gray-900 dark:text-white">
-            PolyOracle Agent Console
+            OSSPoly Console
           </h2>
           {isStreaming && (
             <div className="flex items-center gap-2">

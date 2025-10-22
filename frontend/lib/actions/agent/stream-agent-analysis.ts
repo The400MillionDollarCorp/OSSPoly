@@ -85,6 +85,10 @@ export async function streamAgentAnalysis({
 
   try {
     const client = new Client({ apiUrl: deploymentUrl });
+    console.log("========== LANGGRAPH CLIENT CONFIG ==========");
+    console.log("API URL:", deploymentUrl);
+    console.log("Client initialized");
+    console.log("=============================================");
 
     // Create a new thread with timeout
     const threadPromise = client.threads.create();
@@ -97,21 +101,31 @@ export async function streamAgentAnalysis({
     
     console.log("Created thread:", thread.thread_id);
 
+    // DIAGNOSTIC LOG: Log the request payload before sending
+    const requestPayload = {
+      input: {
+        market_id: marketId,
+        tokens: tokens, // ⚠️ FIX: Add the missing tokens field
+        market_question: marketQuestion,
+        custom_instructions: customInstructions,
+        positions: positions,
+        available_funds: availableFunds,
+        from_js: true,
+      },
+      streamMode: "values", // Use values mode to get complete state data
+    };
+    console.log("========== FRONTEND REQUEST DIAGNOSTICS ==========");
+    console.log("Thread ID:", thread.thread_id);
+    console.log("Assistant ID: polyoracle");
+    console.log("Request payload:", JSON.stringify(requestPayload, null, 2));
+    console.log("Tokens from market data:", tokens);
+    console.log("==================================================");
+    
     // Start the stream with validation and error handling
     const stream = client.runs.stream(
       thread.thread_id,
       "polyoracle", // assistant_id from langgraph.json
-      {
-        input: {
-          market_id: marketId,
-          market_question: marketQuestion,
-          custom_instructions: customInstructions,
-          positions: positions,
-          available_funds: availableFunds,
-          from_js: true,
-        },
-        streamMode: "values", // Use values mode to get complete state data
-      }
+      requestPayload
     );
 
     // Wrap the stream with validation and timeout handling
@@ -149,15 +163,16 @@ function createValidatedStream(originalStream: any, timeout: number) {
 
       try {
         let chunkCount = 0;
+        
         for await (const chunk of originalStream) {
           if (hasEnded) break;
 
           chunkCount++;
-          console.log(`Processing chunk ${chunkCount}:`, chunk?.event || 'unknown event');
 
           try {
             // Validate chunk structure
             const validatedChunk = validateStreamChunk(chunk);
+            
             if (validatedChunk) {
               controller.enqueue(chunk);
               
@@ -198,10 +213,10 @@ function createValidatedStream(originalStream: any, timeout: number) {
           } else if (error.message.includes('connection') || error.message.includes('network')) {
             controller.error(new StreamConnectionError('Network connection lost - check backend status', error));
           } else {
-            controller.error(new StreamConnectionError('Stream processing failed', error));
+            controller.error(new StreamConnectionError(`Stream processing failed: ${error.message}`, error));
           }
         } else {
-          controller.error(new StreamConnectionError('Unknown stream error occurred'));
+          controller.error(new StreamConnectionError('Unknown stream error occurred: ' + String(error)));
         }
       }
     },

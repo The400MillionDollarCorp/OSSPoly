@@ -1,6 +1,6 @@
 /* <ai_context>
    This file contains TypeScript interfaces describing the shape of the agentic run data
-   from the Polymarket AI system. Updated for production consistency.
+   from the OSSPoly AI system. Updated for production consistency.
 </ai_context> */
 
 export interface ToolCall {

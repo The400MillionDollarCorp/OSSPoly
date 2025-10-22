@@ -1,8 +1,8 @@
-# PolyOracle: Complete Setup Guide for Beginners
+# OSSPoly: Complete Setup Guide for Beginners
 
-## 🎯 What is PolyOracle?
+## 🎯 What is OSSPoly?
 
-PolyOracle is an intelligent AI trading agent that analyzes and trades on Polymarket, a decentralized prediction market platform. The system consists of:
+OSSPoly is an intelligent AI trading agent that analyzes and trades on Polymarket, a decentralized prediction market platform. The system consists of:
 
 - **AI Agent "Poly"**: Performs deep market research, analysis, and makes trading decisions
 - **Web Interface**: Modern React app where you can monitor the agent's thought process and approve/reject trades
@@ -18,7 +18,7 @@ PolyOracle is an intelligent AI trading agent that analyzes and trades on Polyma
 ## 🏗️ Project Architecture
 
 ```
-PolyOracle/
+OSSPoly/
 ├── backend/                 # Python AI Agent (LangGraph + LangChain)
 │   ├── src/polyoracle/     # Core agent logic
 │   ├── tests/              # Test suite
