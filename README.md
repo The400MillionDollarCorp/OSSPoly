@@ -37,8 +37,8 @@ On the web app, you can see the agent's thought process and, if it does decide t
 1. **Clone this repository**
 
    ```bash
-   git clone https://github.com/YourUser/polytrader.git
-   cd polytrader
+git clone https://github.com/The400MillionDollarCorp/OSSPoly
+cd OSSPoly
    ```
 
 2. Set up Environment Variables
