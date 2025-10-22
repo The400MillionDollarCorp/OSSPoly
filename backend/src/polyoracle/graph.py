@@ -1419,11 +1419,17 @@ def route_after_reflect_on_trade(state: State, *, config: Optional[RunnableConfi
     if not isinstance(last_msg, ToolMessage):
         return "trade_agent"
     
+    # Check if we have a valid trade decision
     if state.trade_info.get("side") in ["BUY", "SELL"]:
         if state.from_js:
             return "human_confirmation_js"
         else:
             return "human_confirmation"
+    
+    # If trade decision is NO_TRADE, end the workflow
+    if state.trade_info.get("side") == "NO_TRADE":
+        print("ROUTE_AFTER_REFLECT_ON_TRADE: NO_TRADE detected, ending workflow")
+        return "__end__"
     
     # If validation was successful, end the workflow
     if last_msg.status == "success":
@@ -1431,6 +1437,7 @@ def route_after_reflect_on_trade(state: State, *, config: Optional[RunnableConfi
     
     # If we've exceeded max loops, end anyway
     if state.loop_step >= configuration.max_loops:
+        print(f"ROUTE_AFTER_REFLECT_ON_TRADE: Max loops ({configuration.max_loops}) exceeded, ending workflow")
         return "__end__"
     
     # Otherwise, try one more trade decision

@@ -9,11 +9,11 @@ import json
 import logging
 import time
 from typing import Dict, Any, AsyncGenerator
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
 import uvicorn
-from pydantic import BaseModel
+from pydantic import BaseModel, ValidationError
 
 # Import our agent components
 import sys
@@ -59,8 +59,70 @@ async def create_thread():
     return ThreadResponse(thread_id=thread_id)
 
 @app.post("/threads/{thread_id}/runs/stream")
-async def stream_agent_run(thread_id: str, request: AgentRequest):
+async def stream_agent_run(thread_id: str, raw_request: Request):
     """Stream agent execution results"""
+    
+    # DIAGNOSTIC LOG: Capture raw request body before Pydantic validation
+    try:
+        raw_body = await raw_request.body()
+        body_str = raw_body.decode('utf-8')
+        logger.info(f"========== STREAM REQUEST DIAGNOSTICS ==========")
+        logger.info(f"Thread ID: {thread_id}")
+        logger.info(f"Raw request body (first 500 chars): {body_str[:500]}")
+        logger.info(f"Request headers: {dict(raw_request.headers)}")
+        logger.info(f"================================================")
+        
+        # Parse JSON to inspect structure
+        import json
+        body_json = json.loads(body_str)
+        logger.info(f"========== PARSED JSON STRUCTURE ==========")
+        logger.info(f"Top-level keys: {list(body_json.keys())}")
+        logger.info(f"Full JSON (first 1000 chars): {json.dumps(body_json, indent=2)[:1000]}")
+        logger.info(f"==========================================")
+        
+        # Extract data from LangGraph SDK wrapper structure
+        # LangGraph SDK wraps data in an 'input' field, extract it
+        if 'input' in body_json:
+            logger.info(f"🔍 Detected LangGraph SDK format, extracting from 'input' field")
+            request_data = body_json['input']
+        else:
+            request_data = body_json
+        
+        # Try to parse as AgentRequest
+        try:
+            request = AgentRequest(**request_data)
+            logger.info(f"✅ Successfully parsed as AgentRequest")
+            logger.info(f"Market ID: {request.market_id}")
+            logger.info(f"Tokens count: {len(request.tokens)}")
+            logger.info(f"From JS flag: {request.from_js}")
+        except ValidationError as ve:
+            logger.error(f"❌ Pydantic validation failed!")
+            logger.error(f"Validation errors: {ve.errors()}")
+            logger.error(f"Expected schema: market_id (str), tokens (list[dict]), from_js (bool)")
+            logger.error(f"Received data: {request_data}")
+            raise HTTPException(status_code=422, detail=f"Validation error: {ve.errors()}")
+        
+    except json.JSONDecodeError as je:
+        logger.error(f"❌ Failed to parse JSON: {je}")
+        raise HTTPException(status_code=400, detail=f"Invalid JSON: {str(je)}")
+    except Exception as e:
+        logger.error(f"❌ Unexpected error processing request: {e}")
+        raise HTTPException(status_code=500, detail=f"Internal error: {str(e)}")
+    
+    def serialize_for_json(obj):
+        """Recursively convert Pydantic models and other non-serializable objects to dicts"""
+        if hasattr(obj, 'model_dump'):
+            # It's a Pydantic model
+            return obj.model_dump()
+        elif isinstance(obj, dict):
+            # Recursively handle dictionary values
+            return {key: serialize_for_json(value) for key, value in obj.items()}
+        elif isinstance(obj, (list, tuple)):
+            # Recursively handle list/tuple items
+            return [serialize_for_json(item) for item in obj]
+        else:
+            # Return as-is (primitives, None, etc.)
+            return obj
     
     async def generate_agent_stream():
         try:
@@ -90,10 +152,13 @@ async def stream_agent_run(thread_id: str, request: AgentRequest):
             config = {"configurable": {"thread_id": thread_id}}
             
             async for event in graph.astream(initial_state, config):
+                # Recursively convert all Pydantic models to dictionaries
+                serializable_event = serialize_for_json(event)
+                
                 # Format event to match LangGraph SDK format
                 event_data = {
                     "event": "updates",
-                    "data": event
+                    "data": serializable_event
                 }
                 
                 yield f"data: {json.dumps(event_data)}\n\n"
