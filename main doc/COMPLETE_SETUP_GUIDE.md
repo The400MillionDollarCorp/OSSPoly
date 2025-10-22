@@ -56,8 +56,8 @@ Before starting, ensure you have:
 ### Step 1: Clone the Repository
 
 ```bash
-git clone https://github.com/YourUser/polytrader.git
-cd polytrader
+git clone https://github.com/The400MillionDollarCorp/OSSPoly
+cd OSSPoly
 ```
 
 ### Step 2: Backend Setup
